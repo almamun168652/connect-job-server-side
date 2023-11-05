@@ -33,9 +33,24 @@ async function run() {
 
         //      single job post
         app.post("/jobs", async (req, res) => {
-            const job = req.body;
-            const result = await jobsCollection.insertOne(job);
-            res.send(result);
+            try {
+                const job = req.body;
+                const result = await jobsCollection.insertOne(job);
+                res.send(result);
+            } catch (error) {
+                console.log(error)
+            }
+        });
+
+
+        //      all job get
+        app.get("/jobs", async (req, res) => {
+            try {
+                const result = await jobsCollection.find().toArray();
+                res.send(result);
+            } catch (error) {
+                console.log(error)
+            }
         });
 
 
