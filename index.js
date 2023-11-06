@@ -83,8 +83,8 @@ async function run() {
             }
         });
 
-        // get single data
-        app.get('/jobs/details/:id', async (req, res) => {
+        // get single data for details
+        app.get('/job/:id', async (req, res) => {
             try {
                 const id = req.params.id;
                 const query = { _id: new ObjectId(id) }
