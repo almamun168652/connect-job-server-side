@@ -29,6 +29,7 @@ async function run() {
         await client.connect();
 
         const jobsCollection = client.db('jobDB').collection('jobs');
+        const appliedCollection = client.db('jobDB').collection('applied');
 
 
         //      single job post
@@ -40,6 +41,35 @@ async function run() {
             } catch (error) {
                 console.log(error)
             }
+        });
+
+        //      single job apply
+        app.post("/applied", async (req, res) => {
+            try {
+                const appliedJob = req.body;
+                const result = await appliedCollection.insertOne(appliedJob);
+                res.send(result);
+            
+            } catch (error) {
+                console.log(error)
+            }
+        });
+
+
+        // updated apllicant number
+
+        app.patch('/jobs/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+
+            const updateDoc = {
+                $inc: {
+                    applicantNumber: 1, 
+                },
+            };
+
+            const result = await jobsCollection.updateOne(filter, updateDoc);
+            res.send(result);
         });
 
 
@@ -59,6 +89,18 @@ async function run() {
                 const id = req.params.id;
                 const query = { _id: new ObjectId(id) }
                 const result = await jobsCollection.findOne(query);
+                res.send(result);
+            } catch (err) {
+                console.log(err)
+            }
+        })
+
+         // get single data
+         app.get('/jobs/:email', async (req, res) => {
+            try {
+                const email = req.params?.email;
+                const query = { email: email }
+                const result = await jobsCollection.find(query).toArray();
                 res.send(result);
             } catch (err) {
                 console.log(err)
