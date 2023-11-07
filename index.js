@@ -49,7 +49,7 @@ async function run() {
                 const appliedJob = req.body;
                 const result = await appliedCollection.insertOne(appliedJob);
                 res.send(result);
-            
+
             } catch (error) {
                 console.log(error)
             }
@@ -64,11 +64,51 @@ async function run() {
 
             const updateDoc = {
                 $inc: {
-                    applicantNumber: 1, 
+                    applicantNumber: 1,
                 },
             };
 
             const result = await jobsCollection.updateOne(filter, updateDoc);
+            res.send(result);
+        });
+
+        // // update jobs
+        // app.patch('/jobs/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const filter = { _id: new ObjectId(id) };
+        //     const updatedJob = req.body;
+
+        //     const updateDoc = {
+        //         $set: {
+        //             ...updatedJob,
+        //         },
+        //     };
+        //     const result = await jobsCollection.updateOne(filter, updateDoc);
+        //     res.send(result);
+        // });
+
+        app.put("/jobs/:id", async (req, res) => {
+            const id = req.params.id;
+            const jobs = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateJobs = {
+                $set: {
+                    banner: jobs.banner,
+                    title: jobs.title,
+                    logo: jobs.logo,
+                    jobCategory: jobs.jobCategory,
+                    salleryStart: jobs.salleryStart,
+                    salleryEnd: jobs.salleryEnd,
+                    description: jobs.description,
+                    deadline: jobs.deadline,
+                },
+            };
+            const result = await jobsCollection.updateOne(
+                filter,
+                updateJobs,
+                options
+            );
             res.send(result);
         });
 
@@ -95,8 +135,8 @@ async function run() {
             }
         })
 
-         // get single data
-         app.get('/jobs/:email', async (req, res) => {
+        // get single data
+        app.get('/jobs/:email', async (req, res) => {
             try {
                 const email = req.params?.email;
                 const query = { email: email }
@@ -107,6 +147,17 @@ async function run() {
             }
         })
 
+        // delete my post jobs
+        app.delete("/jobs/:id", async (req, res) => {
+            try {
+                const id = req.params.id;
+                const query = { _id: new ObjectId(id) };
+                const result = await jobsCollection.deleteOne(query);
+                res.send(result);
+            } catch (err) {
+                console.log(err);
+            }
+        });
 
 
         // Send a ping to confirm a successful connection
