@@ -123,6 +123,8 @@ async function run() {
             }
         });
 
+
+
         // get single data for details
         app.get('/job/:id', async (req, res) => {
             try {
@@ -135,7 +137,7 @@ async function run() {
             }
         })
 
-        // get single data
+        // get single data by email
         app.get('/jobs/:email', async (req, res) => {
             try {
                 const email = req.params?.email;
@@ -146,6 +148,20 @@ async function run() {
                 console.log(err)
             }
         })
+
+
+        // get single applied by email
+        app.get('/applied/:email', async (req, res) => {
+            try {
+                const email = req.params?.email;
+                const query = { appliedEmail: email }
+                const result = await appliedCollection.find(query).toArray();
+                res.send(result);
+            } catch (err) {
+                console.log(err)
+            }
+        })
+
 
         // delete my post jobs
         app.delete("/jobs/:id", async (req, res) => {
